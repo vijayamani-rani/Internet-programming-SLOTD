@@ -1,0 +1,218 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Beauty Bliss - Appointment Booking</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff5f8;color:#333}
+header{background:#8e3565;color:white;text-align:center;padding:25px}
+header h1{margin:0}
+nav{background:#632448;padding:13px;text-align:center}
+nav a{color:white;text-decoration:none;margin:12px;font-weight:bold}
+.container{max-width:1000px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;margin-bottom:22px;border-radius:12px;box-shadow:0 3px 12px #ddd}
+h2{color:#8e3565}
+input,select,textarea,button{width:100%;padding:11px;margin:7px 0;border:1px solid #ccc;border-radius:6px}
+button{background:#8e3565;color:white;border:0;cursor:pointer;font-weight:bold}
+button:hover{background:#632448}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.service{background:#fff0f6;padding:15px;border-radius:9px;text-align:center}
+table{width:100%;border-collapse:collapse}
+th,td{padding:10px;border:1px solid #ddd;text-align:left}
+th{background:#8e3565;color:white}
+footer{text-align:center;background:#632448;color:white;padding:18px}
+.small{font-size:13px;color:#666}
+</style>
+</head>
+<body>
+<header>
+<h1>Beauty Bliss Parlour</h1>
+<p>Your Beauty, Our Passion</p>
+</header>
+<nav>
+<a href="#services">Services</a>
+<a href="#booking">Book Appointment</a>
+<a href="#customer">My Appointments</a>
+<a href="#staff">Staff Panel</a>
+</nav>
+
+<div class="container">
+<section class="card" id="services">
+<h2>Our Beauty Services</h2>
+<div class="grid">
+<div class="service"><h3>Hair Styling</h3><p>₹500 onwards</p></div>
+<div class="service"><h3>Facial</h3><p>₹800 onwards</p></div>
+<div class="service"><h3>Makeup</h3><p>₹1500 onwards</p></div>
+<div class="service"><h3>Manicure</h3><p>₹400 onwards</p></div>
+</div>
+</section>
+
+<section class="card" id="booking">
+<h2>Book an Appointment</h2>
+<form id="bookingForm">
+<label>Customer Name</label>
+<input id="name" required placeholder="Enter your name">
+<label>Email Address</label>
+<input id="email" type="email" required placeholder="Enter your email">
+<label>Phone Number</label>
+<input id="phone" required placeholder="Enter your phone number">
+<label>Select Service</label>
+<select id="service" required>
+<option value="">Choose a service</option>
+<option>Hair Styling</option>
+<option>Facial</option>
+<option>Makeup</option>
+<option>Manicure</option>
+</select>
+<label>Appointment Date</label>
+<input id="date" type="date" required>
+<label>Appointment Time</label>
+<select id="time" required>
+<option value="">Choose a time</option>
+<option>10:00 AM</option><option>11:00 AM</option>
+<option>12:00 PM</option><option>02:00 PM</option>
+<option>03:00 PM</option><option>04:00 PM</option>
+</select>
+<label>Payment Option</label>
+<select id="payment">
+<option>Pay at Parlour</option>
+<option>Full Payment (Demo)</option>
+<option>Deposit Payment (Demo)</option>
+</select>
+<button type="submit">Book Appointment</button>
+</form>
+<p class="small">Demo only: online payment is not processed.</p>
+<p id="message"></p>
+</section>
+
+<section class="card" id="customer">
+<h2>My Appointments</h2>
+<p>Enter your email to view or cancel your appointments.</p>
+<input id="searchEmail" type="email" placeholder="Your email address">
+<button onclick="showCustomer()">View Appointments</button>
+<div id="customerAppointments"></div>
+</section>
+
+<section class="card" id="feedback">
+<h2>Customer Feedback</h2>
+<form id="feedbackForm">
+<input id="feedbackName" required placeholder="Your name">
+<select id="rating">
+<option>5 - Excellent</option><option>4 - Very Good</option>
+<option>3 - Good</option><option>2 - Fair</option><option>1 - Poor</option>
+</select>
+<textarea id="comments" required placeholder="Write your feedback"></textarea>
+<button>Submit Feedback</button>
+</form>
+<p id="feedbackMessage"></p>
+</section>
+
+<section class="card" id="staff">
+<h2>Staff / Manager Panel</h2>
+<p>View all appointments booked in this browser.</p>
+<button onclick="showStaff()">Refresh Reservations</button>
+<div id="staffAppointments"></div>
+</section>
+</div>
+
+<footer><p>Beauty Bliss Parlour | Appointment Booking System</p></footer>
+
+<script>
+let appointments = [];
+const dateInput = document.getElementById("date");
+dateInput.min = new Date().toISOString().split("T")[0];
+
+document.getElementById("bookingForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  const date = dateInput.value;
+  const time = document.getElementById("time").value;
+  const email = document.getElementById("email").value.trim().toLowerCase();
+
+  if(date < new Date().toISOString().split("T")[0]){
+    alert("Please select a future date.");
+    return;
+  }
+
+  const taken = appointments.some(a => a.date === date && a.time === time);
+  if(taken){
+    alert("This time slot is already booked. Please select another time.");
+    return;
+  }
+
+  const appointment = {
+    id: Date.now(),
+    name: document.getElementById("name").value,
+    email: email,
+    phone: document.getElementById("phone").value,
+    service: document.getElementById("service").value,
+    date: date,
+    time: time,
+    payment: document.getElementById("payment").value,
+    status: "Confirmed"
+  };
+
+  appointments.push(appointment);
+  document.getElementById("message").textContent =
+    "Appointment booked successfully! Your booking ID is " + appointment.id + ".";
+  this.reset();
+  dateInput.min = new Date().toISOString().split("T")[0];
+});
+
+function showCustomer(){
+  const email = document.getElementById("searchEmail").value.trim().toLowerCase();
+  const list = appointments.filter(a => a.email === email);
+  const output = document.getElementById("customerAppointments");
+
+  if(!list.length){
+    output.innerHTML = "<p>No appointments found for this email.</p>";
+    return;
+  }
+
+  output.innerHTML = list.map(a => `
+    <div class="service">
+      <h3>${a.service}</h3>
+      <p>${a.date} at ${a.time}</p>
+      <p>Status: ${a.status}</p>
+      ${a.status === "Confirmed" ?
+        `<button onclick="cancelAppointment(${a.id})">Cancel Appointment</button>` : ""}
+    </div>`).join("");
+}
+
+function cancelAppointment(id){
+  const item = appointments.find(a => a.id === id);
+  if(item){
+    item.status = "Cancelled";
+    showCustomer();
+  }
+}
+
+function showStaff(){
+  const output = document.getElementById("staffAppointments");
+  if(!appointments.length){
+    output.innerHTML = "<p>No reservations have been made yet.</p>";
+    return;
+  }
+
+  output.innerHTML = `<table><tr>
+    <th>Customer</th><th>Service</th><th>Date</th>
+    <th>Time</th><th>Contact</th><th>Status</th></tr>` +
+    appointments.map(a => `<tr>
+    <td>${a.name}</td><td>${a.service}</td>
+    <td>${a.date}</td><td>${a.time}</td>
+    <td>${a.phone}</td><td>${a.status}</td></tr>`).join("") +
+    "</table>";
+}
+
+document.getElementById("feedbackForm").addEventListener("submit", function(e){
+  e.preventDefault();
+  document.getElementById("feedbackMessage").textContent =
+    "Thank you, " + document.getElementById("feedbackName").value +
+    "! Your feedback has been submitted for this demo.";
+  this.reset();
+});
+</script>
+</body>
+</html>
