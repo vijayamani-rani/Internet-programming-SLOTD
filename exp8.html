@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MedCare Hospital Appointment System</title>
+<style>
+*{box-sizing:border-box} body{margin:0;font-family:Arial,sans-serif;background:#f0f7fb;color:#263746}
+header{background:#087e8b;color:white;padding:25px;text-align:center} header h1{margin:0}
+nav{background:#075b68;padding:14px;text-align:center} nav a{color:white;text-decoration:none;margin:10px;font-weight:bold}
+.container{max-width:1050px;margin:25px auto;padding:15px}
+.card{background:white;padding:22px;margin-bottom:22px;border-radius:10px;box-shadow:0 3px 12px #d5e4e9}
+h2{color:#087e8b}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:15px}
+.doctor{background:#eaf7fa;padding:15px;border-radius:9px}
+input,select,textarea,button{width:100%;padding:11px;margin:7px 0;border:1px solid #cbd8dc;border-radius:5px}
+button{background:#087e8b;color:white;border:0;cursor:pointer;font-weight:bold} button:hover{background:#075b68}
+table{width:100%;border-collapse:collapse} th,td{padding:10px;border:1px solid #d5e0e3;text-align:left}
+th{background:#087e8b;color:white} footer{background:#075b68;color:white;text-align:center;padding:18px}
+.small{font-size:13px;color:#61757c}
+</style>
+</head>
+<body>
+<header><h1>MedCare Hospital</h1><p>Your Health, Our Priority</p></header>
+<nav><a href="#doctors">Find Doctors</a><a href="#booking">Book Appointment</a><a href="#patient">Patient Portal</a><a href="#hospitals">Hospitals</a><a href="#admin">Admin</a></nav>
+<div class="container">
+<section class="card"><h2>Welcome to MedCare</h2><p>Find qualified doctors, check available specialties, and book your hospital appointments easily.</p></section>
+<section class="card" id="doctors"><h2>Search Doctors</h2><input id="search" placeholder="Search by doctor name, specialty, or location" oninput="filterDoctors()"><div id="doctorList" class="grid"></div></section>
+<section class="card" id="booking"><h2>Book a Hospital Appointment</h2><form id="bookingForm">
+<label>Patient Name</label><input id="patientName" required placeholder="Enter patient name">
+<label>Email Address</label><input id="patientEmail" type="email" required placeholder="Enter email address">
+<label>Phone Number</label><input id="patientPhone" required placeholder="Enter phone number">
+<label>Select Doctor</label><select id="doctorSelect" required><option value="">Choose a doctor</option></select>
+<label>Appointment Date</label><input id="appointmentDate" type="date" required>
+<label>Appointment Time</label><select id="appointmentTime" required><option value="">Select time</option><option>09:00 AM</option><option>10:00 AM</option><option>11:00 AM</option><option>12:00 PM</option><option>02:00 PM</option><option>03:00 PM</option><option>04:00 PM</option></select>
+<label>Reason for Visit</label><textarea id="reason" required placeholder="Briefly describe the reason for your visit"></textarea>
+<button type="submit">Confirm Appointment</button></form><p id="bookingMessage"></p><p class="small">This demonstration does not send real email or SMS reminders.</p></section>
+<section class="card" id="patient"><h2>Patient Portal</h2><p>Enter your registered email to view your appointment history.</p><input id="portalEmail" type="email" placeholder="Enter patient email"><button onclick="showPatientAppointments()">View My Appointments</button><div id="patientHistory"></div></section>
+<section class="card" id="hospitals"><h2>Hospital Information</h2><div class="grid">
+<div class="doctor"><h3>MedCare Central Hospital</h3><p>Location: City Centre</p><p>Departments: General Medicine, Cardiology</p></div>
+<div class="doctor"><h3>MedCare Health Clinic</h3><p>Location: North City</p><p>Departments: Pediatrics, Dermatology</p></div>
+<div class="doctor"><h3>MedCare Specialty Hospital</h3><p>Location: South City</p><p>Departments: Orthopedics, Neurology</p></div>
+</div><p class="small">Sample hospital locations for demonstration only.</p></section>
+<section class="card" id="checkin"><h2>Patient Check-in Form</h2><form id="checkinForm"><input id="checkinName" required placeholder="Patient name"><input id="checkinId" required placeholder="Appointment ID"><button type="submit">Check In</button></form><p id="checkinMessage"></p></section>
+<section class="card" id="reviews"><h2>Patient Feedback</h2><form id="reviewForm"><input id="reviewName" required placeholder="Your name">
+<select id="reviewRating"><option>5 - Excellent</option><option>4 - Very Good</option><option>3 - Good</option><option>2 - Fair</option><option>1 - Poor</option></select>
+<textarea id="reviewText" required placeholder="Write your feedback"></textarea><button>Submit Review</button></form><p id="reviewMessage"></p></section>
+<section class="card" id="admin"><h2>Administrator Dashboard</h2><p>View appointments recorded during this browser session.</p><button onclick="showAllAppointments()">View All Appointments</button><div id="adminList"></div></section>
+</div><footer><p>MedCare Hospital | Online Appointment Booking System</p></footer>
+<script>
+const doctors=[
+{name:"Dr. Ananya Rao",specialty:"Cardiology",location:"City Centre"},
+{name:"Dr. Rahul Kumar",specialty:"General Medicine",location:"City Centre"},
+{name:"Dr. Priya Sharma",specialty:"Pediatrics",location:"North City"},
+{name:"Dr. Kiran Reddy",specialty:"Dermatology",location:"North City"},
+{name:"Dr. Sneha Patel",specialty:"Orthopedics",location:"South City"},
+{name:"Dr. Arjun Verma",specialty:"Neurology",location:"South City"}];
+let appointments=[];
+const dateInput=document.getElementById("appointmentDate");dateInput.min=new Date().toISOString().split("T")[0];
+function loadDoctors(){
+ document.getElementById("doctorList").innerHTML=doctors.map(d=>`<div class="doctor"><h3>${d.name}</h3><p>Specialty: ${d.specialty}</p><p>Location: ${d.location}</p><button onclick="selectDoctor('${d.name}')">Book This Doctor</button></div>`).join("");
+ document.getElementById("doctorSelect").innerHTML='<option value="">Choose a doctor</option>'+doctors.map(d=>`<option value="${d.name}">${d.name} - ${d.specialty}</option>`).join("");
+}
+function filterDoctors(){
+ const query=document.getElementById("search").value.toLowerCase();
+ const filtered=doctors.filter(d=>(d.name+" "+d.specialty+" "+d.location).toLowerCase().includes(query));
+ document.getElementById("doctorList").innerHTML=filtered.length?filtered.map(d=>`<div class="doctor"><h3>${d.name}</h3><p>Specialty: ${d.specialty}</p><p>Location: ${d.location}</p><button onclick="selectDoctor('${d.name}')">Book This Doctor</button></div>`).join(""):"<p>No doctors found.</p>";
+}
+function selectDoctor(name){document.getElementById("doctorSelect").value=name;document.getElementById("booking").scrollIntoView({behavior:"smooth"});}
+document.getElementById("bookingForm").addEventListener("submit",function(e){
+ e.preventDefault();const date=dateInput.value,time=document.getElementById("appointmentTime").value,doctor=document.getElementById("doctorSelect").value;
+ if(date<new Date().toISOString().split("T")[0]){alert("Please select today or a future date.");return;}
+ if(appointments.some(a=>a.doctor===doctor&&a.date===date&&a.time===time&&a.status==="Booked")){alert("This doctor already has an appointment at that time. Choose another slot.");return;}
+ const appointment={id:"MC"+Date.now(),name:document.getElementById("patientName").value,email:document.getElementById("patientEmail").value.trim().toLowerCase(),phone:document.getElementById("patientPhone").value,doctor,date,time,reason:document.getElementById("reason").value,status:"Booked"};
+ appointments.push(appointment);document.getElementById("bookingMessage").textContent="Appointment booked successfully! Your appointment ID is "+appointment.id;this.reset();
+});
+function showPatientAppointments(){
+ const email=document.getElementById("portalEmail").value.trim().toLowerCase(),list=appointments.filter(a=>a.email===email),output=document.getElementById("patientHistory");
+ if(!list.length){output.innerHTML="<p>No appointments found for this email.</p>";return;}
+ output.innerHTML=list.map(a=>`<div class="doctor"><h3>${a.doctor}</h3><p>Appointment ID: ${a.id}</p><p>Date: ${a.date} | Time: ${a.time}</p><p>Status: ${a.status}</p>${a.status==="Booked"?`<button onclick="cancelAppointment('${a.id}')">Cancel Appointment</button>`:""}</div>`).join("");
+}
+function cancelAppointment(id){const item=appointments.find(a=>a.id===id);if(item){item.status="Cancelled";showPatientAppointments();}}
+function showAllAppointments(){
+ const output=document.getElementById("adminList");if(!appointments.length){output.innerHTML="<p>No appointments have been booked yet.</p>";return;}
+ output.innerHTML=`<table><tr><th>ID</th><th>Patient</th><th>Doctor</th><th>Date</th><th>Time</th><th>Phone</th><th>Status</th></tr>`+
+ appointments.map(a=>`<tr><td>${a.id}</td><td>${a.name}</td><td>${a.doctor}</td><td>${a.date}</td><td>${a.time}</td><td>${a.phone}</td><td>${a.status}</td></tr>`).join("")+"</table>";
+}
+document.getElementById("checkinForm").addEventListener("submit",function(e){e.preventDefault();const id=document.getElementById("checkinId").value.trim(),item=appointments.find(a=>a.id===id&&a.status==="Booked");
+ document.getElementById("checkinMessage").textContent=item?"Check-in successful for "+item.name+".":"Appointment not found. Please check the appointment ID.";this.reset();});
+document.getElementById("reviewForm").addEventListener("submit",function(e){e.preventDefault();document.getElementById("reviewMessage").textContent="Thank you, "+document.getElementById("reviewName").value+"! Your feedback has been submitted.";this.reset();});
+loadDoctors();
+</script>
+</body>
+</html>
