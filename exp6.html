@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SweetSlice Cake Store</title>
+
+  <style>
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; font-family: Arial, sans-serif; background: #fff7f8; color: #49313d; }
+
+    header { text-align: center; padding: 28px 16px; color: white; background: linear-gradient(120deg,#9b315e,#e77891); }
+
+    nav { background: #69213f; padding: 12px; text-align: center; }
+
+    nav a { color: white; text-decoration: none; margin: 0 10px; }
+
+    main { max-width: 1000px; margin: 24px auto; padding: 0 16px; }
+
+    .panel, .cake, .cart { background: white; border-radius: 12px; padding: 18px; margin-bottom: 16px; box-shadow: 0 4px 14px #f0dce4; }
+
+    .filters { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 12px; }
+
+    input, select, textarea { width: 100%; padding: 11px; border: 1px solid #e1c4d0; border-radius: 7px; }
+
+    label { display: block; font-weight: bold; margin: 8px 0 5px; }
+
+    button { border: 0; padding: 11px 15px; border-radius: 7px; background: #b83f6b; color: white; cursor: pointer; margin-top: 10px; }
+
+    button:hover { background: #86284d; }
+
+    .cakes { display: grid; grid-template-columns: repeat(auto-fit,minmax(210px,1fr)); gap: 16px; }
+
+    .cake h3 { color: #9b315e; margin-top: 0; }
+
+    .emoji { font-size: 42px; background: #fff0f4; text-align: center; padding: 14px; border-radius: 10px; }
+
+    .price { font-weight: bold; color: #8a254e; }
+
+    #message { font-weight: bold; color: #18764b; }
+
+    footer { text-align: center; padding: 18px; color: #856b78; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header><h1>SweetSlice</h1><p>Fresh cakes for every celebration</p></header>
+
+  <nav><a href="#cakes">Browse Cakes</a><a href="#cart">My Cart</a><a href="#orders">My Orders</a><a href="#admin">Admin Demo</a></nav>
+
+  <main>
+
+    <section class="panel">
+
+      <h2>Find Your Cake</h2>
+
+      <div class="filters">
+
+        <div><label for="search">Cake name</label><input id="search" placeholder="Chocolate, vanilla..."></div>
+
+        <div><label for="category">Category</label><select id="category"><option value="all">All categories</option><option>Birthday</option><option>Wedding</option><option>Chocolate</option><option>Fruit</option></select></div>
+
+        <div><label for="maxPrice">Maximum price (₹)</label><input id="maxPrice" type="number" min="0" placeholder="Any price"></div>
+
+      </div>
+
+      <button onclick="filterCakes()">Search / Filter</button>
+
+    </section>
+
+    <h2 id="cakes">Our Cakes</h2>
+
+    <section class="cakes" id="cakeList">
+
+      <article class="cake" data-name="chocolate truffle" data-category="Chocolate" data-price="650">
+
+        <div class="emoji">🍫🎂</div><h3>Chocolate Truffle</h3><p>Rich chocolate cake with smooth ganache.</p><p class="price">₹650 / kg</p>
+
+        <label>Size</label><select class="size"><option value="1">1 kg</option><option value="2">2 kg</option><option value="0.5">0.5 kg</option></select>
+
+        <label>Message on cake</label><input class="cakeMessage" placeholder="Happy Birthday!">
+
+        <button onclick="addToCart(this,'Chocolate Truffle',650)">Add to Cart</button>
+
+      </article>
+
+      <article class="cake" data-name="vanilla birthday" data-category="Birthday" data-price="500">
+
+        <div class="emoji">🍰🎉</div><h3>Vanilla Birthday Cake</h3><p>Soft vanilla sponge with creamy frosting.</p><p class="price">₹500 / kg</p>
+
+        <label>Size</label><select class="size"><option value="1">1 kg</option><option value="2">2 kg</option><option value="0.5">0.5 kg</option></select>
+
+        <label>Message on cake</label><input class="cakeMessage" placeholder="Happy Birthday!">
+
+        <button onclick="addToCart(this,'Vanilla Birthday Cake',500)">Add to Cart</button>
+
+      </article>
+
+      <article class="cake" data-name="strawberry fruit" data-category="Fruit" data-price="700">
+
+        <div class="emoji">🍓🍰</div><h3>Strawberry Delight</h3><p>Fresh strawberry flavour with cream.</p><p class="price">₹700 / kg</p>
+
+        <label>Size</label><select class="size"><option value="1">1 kg</option><option value="2">2 kg</option><option value="0.5">0.5 kg</option></select>
+
+        <label>Message on cake</label><input class="cakeMessage" placeholder="Best wishes!">
+
+        <button onclick="addToCart(this,'Strawberry Delight',700)">Add to Cart</button>
+
+      </article>
+
+      <article class="cake" data-name="wedding red velvet" data-category="Wedding" data-price="900">
+
+        <div class="emoji">❤️🎂</div><h3>Red Velvet Celebration</h3><p>Red velvet layers for special occasions.</p><p class="price">₹900 / kg</p>
+
+        <label>Size</label><select class="size"><option value="1">1 kg</option><option value="2">2 kg</option><option value="0.5">0.5 kg</option></select>
+
+        <label>Message on cake</label><input class="cakeMessage" placeholder="Congratulations!">
+
+        <button onclick="addToCart(this,'Red Velvet Celebration',900)">Add to Cart</button>
+
+      </article>
+
+    </section>
+
+    <section class="panel" id="cart">
+
+      <h2>My Cart</h2>
+
+      <div id="cartItems">Your cart is empty.</div>
+
+      <p id="total" class="price">Total: ₹0</p>
+
+      <button onclick="placeOrder()">Place Demo Order</button>
+
+      <p id="message"></p>
+
+    </section>
+
+    <section class="panel" id="orders">
+
+      <h2>My Orders / Shipping Status</h2>
+
+      <div id="orderStatus">No orders placed yet.</div>
+
+      <label for="address">Delivery address</label>
+
+      <textarea id="address" placeholder="Enter delivery address"></textarea>
+
+      <button onclick="saveAddress()">Save Address (Demo)</button>
+
+      <p id="addressResult"></p>
+
+    </section>
+
+    <section class="panel" id="admin">
+
+      <h2>Admin Panel (Demo)</h2>
+
+      <p>Products listed: <strong id="productCount">4</strong></p>
+
+      <p id="adminReport">Orders this session: 0</p>
+
+      <label for="statusSelect">Update latest order status</label>
+
+      <select id="statusSelect"><option>Order received</option><option>Preparing</option><option>Out for delivery</option><option>Delivered</option></select>
+
+      <button onclick="updateOrderStatus()">Update Status</button>
+
+    </section>
+
+  </main>
+
+  <footer>SweetSlice Cake Store | IP Lab Experiment 6</footer>
+
+  <script>
+
+    let cart = [];
+
+    let order = null;
+
+    function filterCakes() {
+
+      const query = document.getElementById("search").value.trim().toLowerCase();
+
+      const category = document.getElementById("category").value;
+
+      const max = Number(document.getElementById("maxPrice").value) || Infinity;
+
+      document.querySelectorAll(".cake").forEach(cake => {
+
+        const matchName = cake.dataset.name.includes(query);
+
+        const matchCategory = category === "all" || cake.dataset.category === category;
+
+        const matchPrice = Number(cake.dataset.price) <= max;
+
+        cake.style.display = matchName && matchCategory && matchPrice ? "block" : "none";
+
+      });
+
+    }
+
+    function addToCart(button, name, price) {
+
+      const card = button.closest(".cake");
+
+      const size = Number(card.querySelector(".size").value);
+
+      const message = card.querySelector(".cakeMessage").value.trim();
+
+      cart.push({ name, price: price * size, size, message });
+
+      renderCart();
+
+    }
+
+    function renderCart() {
+
+      const items = document.getElementById("cartItems");
+
+      if (!cart.length) { items.textContent = "Your cart is empty."; }
+
+      else { items.innerHTML = cart.map((item, i) =>
+
+        "<p>" + (i + 1) + ". " + item.name + " (" + item.size + " kg) — ₹" +
+
+        item.price + (item.message ? " | Message: " + item.message : "") + "</p>").join(""); }
+
+      document.getElementById("total").textContent =
+
+        "Total: ₹" + cart.reduce((sum, item) => sum + item.price, 0);
+
+    }
+
+    function placeOrder() {
+
+      if (!cart.length) { document.getElementById("message").textContent = "Add a cake to the cart first."; return; }
+
+      order = { id: "SS" + Math.floor(10000 + Math.random() * 90000), status: "Order received (demo)",
+
+        total: cart.reduce((sum, item) => sum + item.price, 0), items: cart.slice() };
+
+      document.getElementById("message").textContent =
+
+        "Demo order placed: " + order.id + ". No real payment was processed.";
+
+      document.getElementById("orderStatus").textContent =
+
+        "Order " + order.id + " | Total ₹" + order.total + " | Status: " + order.status;
+
+      document.getElementById("adminReport").textContent = "Orders this session: 1";
+
+    }
+
+    function saveAddress() {
+
+      const address = document.getElementById("address").value.trim();
+
+      document.getElementById("addressResult").textContent =
+
+        address ? "Delivery address saved for this demo session." : "Please enter a delivery address.";
+
+    }
+
+    function updateOrderStatus() {
+
+      if (!order) { document.getElementById("adminReport").textContent = "No order is available to update."; return; }
+
+      order.status = document.getElementById("statusSelect").value + " (demo)";
+
+      document.getElementById("orderStatus").textContent =
+
+        "Order " + order.id + " | Total ₹" + order.total + " | Status: " + order.status;
+
+      document.getElementById("message").textContent = "Demo order status updated.";
+
+    }
+
+  </script>
+
+</body>
+
+</html>
