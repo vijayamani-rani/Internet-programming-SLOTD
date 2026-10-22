@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>SkyBook - Flight Reservation</title>
+
+  <style>
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; font-family: Arial, sans-serif; background: #f2f6fc; color: #23334d; }
+
+    header { padding: 28px 18px; text-align: center; color: white; background: linear-gradient(120deg,#123b70,#2676b8); }
+
+    nav { padding: 12px; text-align: center; background: #0d2b50; }
+
+    nav a { color: white; text-decoration: none; margin: 0 10px; }
+
+    main { max-width: 950px; margin: 24px auto; padding: 0 16px; }
+
+    .panel, .flight, .ticket { background: white; padding: 18px; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 4px 14px #dce5f1; }
+
+    .fields { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 12px; }
+
+    label { display: block; font-weight: bold; margin: 8px 0 5px; }
+
+    input, select, textarea { width: 100%; padding: 11px; border: 1px solid #c5d1e0; border-radius: 7px; }
+
+    button { border: 0; padding: 11px 15px; background: #2676b8; color: white; border-radius: 7px; cursor: pointer; margin-top: 10px; }
+
+    button:hover { background: #174f87; }
+
+    .flight { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+
+    .flight h3 { margin: 0 0 8px; color: #174f87; }
+
+    .muted { color: #65758a; font-size: 14px; }
+
+    #message { font-weight: bold; color: #13764a; }
+
+    footer { text-align: center; padding: 18px; color: #65758a; }
+
+  </style>
+
+</head>
+
+<body>
+
+  <header><h1>SkyBook</h1><p>Search, book, and manage your flights</p></header>
+
+  <nav><a href="#search">Search Flights</a><a href="#myticket">My Ticket</a><a href="#feedback">Feedback</a><a href="#admin">Admin Report</a></nav>
+
+  <main>
+
+    <section class="panel" id="search">
+
+      <h2>Search Flights</h2>
+
+      <div class="fields">
+
+        <div><label for="from">From</label><input id="from" placeholder="Chennai"></div>
+
+        <div><label for="to">Destination</label><input id="to" placeholder="Delhi"></div>
+
+        <div><label for="date">Travel date</label><input id="date" type="date"></div>
+
+        <div><label for="classType">Class</label><select id="classType"><option>Economy</option><option>Business</option><option>First Class</option></select></div>
+
+      </div>
+
+      <button onclick="searchFlights()">Search Flights</button>
+
+      <p class="muted">Demo inventory only. Availability is not connected to airline systems.</p>
+
+    </section>
+
+    <h2>Available Sample Flights</h2>
+
+    <section id="flightList">
+
+      <article class="flight" data-from="chennai" data-to="delhi">
+
+        <div><h3>SkyAir SA 101</h3><p>Chennai → Delhi | 08:30 AM</p><p>Seats shown: 18</p></div>
+
+        <div><strong>₹5,200</strong><br><button onclick="bookFlight('SkyAir SA 101')">Select Flight</button></div>
+
+      </article>
+
+      <article class="flight" data-from="chennai" data-to="mumbai">
+
+        <div><h3>BlueWings BW 220</h3><p>Chennai → Mumbai | 11:15 AM</p><p>Seats shown: 12</p></div>
+
+        <div><strong>₹4,100</strong><br><button onclick="bookFlight('BlueWings BW 220')">Select Flight</button></div>
+
+      </article>
+
+      <article class="flight" data-from="hyderabad" data-to="bengaluru">
+
+        <div><h3>CloudJet CJ 315</h3><p>Hyderabad → Bengaluru | 06:45 PM</p><p>Seats shown: 9</p></div>
+
+        <div><strong>₹2,800</strong><br><button onclick="bookFlight('CloudJet CJ 315')">Select Flight</button></div>
+
+      </article>
+
+    </section>
+
+    <section class="panel">
+
+      <h2>Passenger and Payment Details</h2>
+
+      <div class="fields">
+
+        <div><label for="passenger">Passenger name</label><input id="passenger" placeholder="Full name"></div>
+
+        <div><label for="email">Email</label><input id="email" type="email" placeholder="name@example.com"></div>
+
+        <div><label for="seat">Seat</label><select id="seat"><option>12A</option><option>12B</option><option>14C</option><option>18D</option></select></div>
+
+      </div>
+
+      <label for="payment">Payment method (demo)</label>
+
+      <select id="payment"><option>UPI (demo)</option><option>Credit/Debit Card (demo)</option><option>Net Banking (demo)</option></select>
+
+      <button onclick="confirmBooking()">Confirm Demo Booking</button>
+
+      <p class="muted">Do not enter real payment details. This page does not process payments.</p>
+
+      <p id="message"></p>
+
+    </section>
+
+    <section class="panel" id="myticket">
+
+      <h2>My Ticket / Booking Status</h2>
+
+      <input id="ticketSearch" placeholder="Enter demo booking reference">
+
+      <button onclick="viewTicket()">View Booking</button>
+
+      <button onclick="cancelTicket()">Cancel Demo Ticket</button>
+
+      <button onclick="printTicket()">Print Ticket</button>
+
+      <div id="ticketDetails" class="ticket">No demo ticket created yet.</div>
+
+    </section>
+
+    <section class="panel" id="feedback">
+
+      <h2>Customer Feedback</h2>
+
+      <textarea id="feedbackText" placeholder="Write your feedback"></textarea>
+
+      <button onclick="sendFeedback()">Submit Feedback</button>
+
+      <p id="feedbackResult"></p>
+
+    </section>
+
+    <section class="panel" id="admin">
+
+      <h2>Admin Report (Demo)</h2>
+
+      <p id="report">Demo bookings this session: 0</p>
+
+      <button onclick="showReport()">Refresh Report</button>
+
+    </section>
+
+  </main>
+
+  <footer>SkyBook | IP Lab Experiment 5</footer>
+
+  <script>
+
+    let selectedFlight = "";
+
+    let booking = null;
+
+    function searchFlights() {
+
+      const from = document.getElementById("from").value.trim().toLowerCase();
+
+      const to = document.getElementById("to").value.trim().toLowerCase();
+
+      if (!from || !to) { document.getElementById("message").textContent = "Enter source and destination."; return; }
+
+      let count = 0;
+
+      document.querySelectorAll(".flight").forEach(f => {
+
+        const match = f.dataset.from === from && f.dataset.to === to;
+
+        f.style.display = match ? "flex" : "none";
+
+        if (match) count++;
+
+      });
+
+      document.getElementById("message").textContent = count ? count + " sample flight(s) found." : "No sample flights found for this route.";
+
+    }
+
+    function bookFlight(name) {
+
+      selectedFlight = name;
+
+      document.getElementById("message").textContent = name + " selected. Enter passenger details below.";
+
+      document.getElementById("passenger").focus();
+
+    }
+
+    function confirmBooking() {
+
+      const passenger = document.getElementById("passenger").value.trim();
+
+      const email = document.getElementById("email").value.trim();
+
+      if (!selectedFlight) { document.getElementById("message").textContent = "Please select a flight first."; return; }
+
+      if (!passenger || !email) { document.getElementById("message").textContent = "Enter passenger name and email."; return; }
+
+      booking = { ref: "SB" + Math.floor(100000 + Math.random() * 900000), passenger, email,
+
+        flight: selectedFlight, seat: document.getElementById("seat").value, status: "Confirmed (demo)" };
+
+      document.getElementById("ticketSearch").value = booking.ref;
+
+      document.getElementById("message").textContent = "Demo booking created. No payment was processed and no email was sent.";
+
+      viewTicket(); showReport();
+
+    }
+
+    function viewTicket() {
+
+      const ref = document.getElementById("ticketSearch").value.trim();
+
+      const box = document.getElementById("ticketDetails");
+
+      if (!booking || ref !== booking.ref) { box.textContent = "Booking reference not found in this session."; return; }
+
+      box.innerHTML = "<h3>SkyBook E-Ticket (Demo)</h3><p>Reference: " + booking.ref +
+
+        "</p><p>Passenger: " + booking.passenger + "</p><p>Email: " + booking.email +
+
+        "</p><p>Flight: " + booking.flight + "</p><p>Seat: " + booking.seat +
+
+        "</p><p>Status: " + booking.status + "</p>";
+
+    }
+
+    function cancelTicket() {
+
+      if (!booking || document.getElementById("ticketSearch").value.trim() !== booking.ref) {
+
+        document.getElementById("message").textContent = "Enter a valid demo booking reference."; return;
+
+      }
+
+      booking.status = "Cancelled (demo)";
+
+      viewTicket(); showReport();
+
+      document.getElementById("message").textContent = "Demo ticket cancelled. No real reservation or refund was made.";
+
+    }
+
+    function printTicket() { window.print(); }
+
+    function sendFeedback() {
+
+      const text = document.getElementById("feedbackText").value.trim();
+
+      document.getElementById("feedbackResult").textContent = text ? "Thank you. Feedback recorded for this demo session." : "Please enter feedback.";
+
+    }
+
+    function showReport() {
+
+      document.getElementById("report").textContent = "Demo bookings this session: " + (booking ? 1 : 0) +
+
+        (booking ? " | Latest status: " + booking.status : "");
+
+    }
+
+  </script>
+
+</body>
+
+</html>
+
