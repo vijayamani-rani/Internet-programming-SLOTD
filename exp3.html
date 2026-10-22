@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Bus Ticket Booking</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f5f9;
+            margin: 0;
+        }
+
+        header {
+            background: #123456;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #245580;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 12px;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 85%;
+            margin: 20px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        input, select, button, textarea {
+            padding: 10px;
+            margin: 6px 0;
+        }
+
+        button {
+            background: #123456;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .bus {
+            background: #e1edf5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+
+        footer {
+            background: #123456;
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>EasyBus Ticket Booking</h1>
+    <p>Travel Safely and Comfortably</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#buses">Buses</a>
+    <a href="#booking">Book Ticket</a>
+    <a href="#comments">Comments</a>
+    <a href="#admin">Admin</a>
+</nav>
+
+<div class="container">
+
+    <section class="box" id="home">
+        <h2>Search for Buses</h2>
+
+        <label>From:</label><br>
+        <input type="text" id="from" placeholder="Starting city"><br>
+
+        <label>To:</label><br>
+        <input type="text" id="to" placeholder="Destination city"><br>
+
+        <label>Travel Date:</label><br>
+        <input type="date" id="date"><br>
+
+        <button onclick="searchBus()">Search Buses</button>
+        <p id="searchResult"></p>
+    </section>
+
+    <section class="box" id="buses">
+        <h2>Available Buses</h2>
+
+        <div class="bus">
+            <h3>City Express - Volvo AC</h3>
+            <p>Route: Chennai to Bengaluru</p>
+            <p>Departure: 9:00 PM</p>
+            <p>Seats Available: 20</p>
+            <p>Ticket Price: Rs. 900</p>
+            <button onclick="selectBus('City Express', 900)">
+                Select Bus
+            </button>
+        </div>
+
+        <div class="bus">
+            <h3>Royal Travels - Sleeper</h3>
+            <p>Route: Chennai to Hyderabad</p>
+            <p>Departure: 8:00 PM</p>
+            <p>Seats Available: 15</p>
+            <p>Ticket Price: Rs. 1200</p>
+            <button onclick="selectBus('Royal Travels', 1200)">
+                Select Bus
+            </button>
+        </div>
+
+        <div class="bus">
+            <h3>Green Line - Non AC Coach</h3>
+            <p>Route: Bengaluru to Mysuru</p>
+            <p>Departure: 10:00 AM</p>
+            <p>Seats Available: 25</p>
+            <p>Ticket Price: Rs. 400</p>
+            <button onclick="selectBus('Green Line', 400)">
+                Select Bus
+            </button>
+        </div>
+    </section>
+
+    <section class="box" id="booking">
+        <h2>Book Your Ticket</h2>
+
+        <form onsubmit="bookTicket(event)">
+            <label>Passenger Name:</label><br>
+            <input type="text" id="name" required><br>
+
+            <label>Selected Bus:</label><br>
+            <input type="text" id="busName" readonly required><br>
+
+            <label>Number of Seats:</label><br>
+            <input type="number" id="seats" min="1" max="5"
+                   value="1" required><br>
+
+            <label>Travel Date:</label><br>
+            <input type="date" id="travelDate" required><br>
+
+            <button type="submit">Book Ticket</button>
+        </form>
+
+        <p id="bookingResult"></p>
+    </section>
+
+    <section class="box" id="comments">
+        <h2>Passenger Comments</h2>
+
+        <textarea id="comment" placeholder="Write your comment"></textarea><br>
+
+        <button onclick="addComment()">Submit Comment</button>
+
+        <p id="commentResult"></p>
+    </section>
+
+    <section class="box" id="admin">
+        <h2>Admin Panel (Demo)</h2>
+        <p>Bus categories: Volvo, Sleeper, Non AC Coach</p>
+        <p>Admin can manage bus information, seats, and reports.</p>
+        <button onclick="showReport()">Generate Booking Report</button>
+        <p id="report"></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 EasyBus Ticket Booking</p>
+</footer>
+
+<script>
+    var selectedBus = "";
+    var ticketPrice = 0;
+    var totalBookings = 0;
+    var bookingDetails = [];
+
+    function searchBus() {
+        var from = document.getElementById("from").value;
+        var to = document.getElementById("to").value;
+        var date = document.getElementById("date").value;
+
+        if (from == "" || to == "" || date == "") {
+            alert("Please enter route and travel date.");
+            return;
+        }
+
+        document.getElementById("searchResult").innerHTML =
+            "Search completed for " + from + " to " + to +
+            " on " + date +
+            ". Check the sample buses listed below.";
+    }
+
+    function selectBus(name, price) {
+        selectedBus = name;
+        ticketPrice = price;
+
+        document.getElementById("busName").value = name;
+        document.getElementById("booking").scrollIntoView();
+
+        alert(name + " selected successfully.");
+    }
+
+    function bookTicket(event) {
+        event.preventDefault();
+
+        var name = document.getElementById("name").value;
+        var bus = document.getElementById("busName").value;
+        var seats = Number(document.getElementById("seats").value);
+        var date = document.getElementById("travelDate").value;
+
+        if (bus == "" || ticketPrice == 0) {
+            alert("Please select a bus first.");
+            return;
+        }
+
+        var total = seats * ticketPrice;
+
+        totalBookings++;
+
+        var booking = {
+            id: totalBookings,
+            passenger: name,
+            bus: bus,
+            seats: seats,
+            date: date,
+            total: total
+        };
+
+        bookingDetails.push(booking);
+
+        document.getElementById("bookingResult").innerHTML =
+            "Booking ID: " + booking.id +
+            "<br>Passenger: " + name +
+            "<br>Bus: " + bus +
+            "<br>Seats: " + seats +
+            "<br>Total Amount: Rs. " + total +
+            "<br>Booking confirmed (demo).";
+
+        document.getElementById("name").value = "";
+    }
+
+    function addComment() {
+        var comment = document.getElementById("comment").value;
+
+        if (comment == "") {
+            alert("Please enter a comment.");
+            return;
+        }
+
+        document.getElementById("commentResult").innerHTML =
+            "Your comment: " + comment;
+
+        document.getElementById("comment").value = "";
+    }
+
+    function showReport() {
+        var reportText = "Total bookings: " + totalBookings;
+
+        for (var i = 0; i < bookingDetails.length; i++) {
+            reportText += "<br>Booking " + bookingDetails[i].id +
+                ": " + bookingDetails[i].passenger +
+                " - Rs. " + bookingDetails[i].total;
+        }
+
+        document.getElementById("report").innerHTML = reportText;
+    }
+</script>
+
+</body>
+</html>

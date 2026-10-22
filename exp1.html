@@ -1,0 +1,152 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Management System</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f6fb;
+            color: #172033;
+        }
+        header {
+            background: #172554;
+            color: white;
+            padding: 20px 7%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        header h2 { color: #93c5fd; }
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 8px;
+        }
+        .hero {
+            text-align: center;
+            padding: 75px 20px;
+            background: linear-gradient(135deg, #172554, #4338ca);
+            color: white;
+        }
+        .hero h1 { font-size: 44px; }
+        .hero p { line-height: 1.8; }
+        input, button {
+            padding: 12px;
+            border: 0;
+            border-radius: 6px;
+        }
+        input { width: min(320px, 90%); }
+        button {
+            background: #60a5fa;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        main { padding: 35px 7%; }
+        .books {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+            gap: 18px;
+        }
+        .book {
+            background: white;
+            padding: 22px;
+            border-radius: 10px;
+            box-shadow: 0 3px 12px #dce2ef;
+        }
+        .book h3 { color: #3730a3; }
+        .status { color: #15803d; font-weight: bold; }
+        footer {
+            text-align: center;
+            background: #172554;
+            color: white;
+            padding: 20px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h2>LibraryHub</h2>
+        <nav>
+            <a href="#home">Home</a>
+            <a href="#books">Books</a>
+            <a href="#account">Account</a>
+            <a href="#contact">Contact</a>
+        </nav>
+    </header>
+
+    <section class="hero" id="home">
+        <h1>Your Campus Library</h1>
+        <p>Search books, explore learning resources, and manage your library.</p>
+        <input id="search" type="text" placeholder="Search by book title or author">
+        <button onclick="searchBooks()">Search</button>
+    </section>
+
+    <main>
+        <h2 id="books">Available Books</h2>
+        <div class="books" id="bookList">
+            <article class="book">
+                <h3>Introduction to Python</h3>
+                <p>Author: John Smith</p>
+                <p>Category: Programming</p>
+                <p class="status">Available</p>
+            </article>
+            <article class="book">
+                <h3>Database Management Systems</h3>
+                <p>Author: Abraham Silberschatz</p>
+                <p>Category: Database</p>
+                <p class="status">Available</p>
+            </article>
+            <article class="book">
+                <h3>Web Technologies</h3>
+                <p>Author: Uttam K. Roy</p>
+                <p>Category: Web Development</p>
+                <p class="status">Available</p>
+            </article>
+            <article class="book">
+                <h3>Data Structures</h3>
+                <p>Author: Mark Allen Weiss</p>
+                <p>Category: Computer Science</p>
+                <p class="status">Available</p>
+            </article>
+        </div>
+
+        <section id="account">
+            <h2>Student & Librarian Portal</h2>
+            <p>Login and registration features will be connected to the database in the next stage.</p>
+        </section>
+
+        <section id="contact">
+            <h2>Contact the Library</h2>
+            <p>Email: library@example.com</p>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 LibraryHub | IP Lab Project</p>
+    </footer>
+
+    <script>
+        function searchBooks() {
+            const query = document.getElementById("search").value.toLowerCase();
+            const books = document.querySelectorAll(".book");
+            let found = 0;
+
+            books.forEach(book => {
+                const matches = book.innerText.toLowerCase().includes(query);
+                book.style.display = matches ? "block" : "none";
+                if (matches) found++;
+            });
+
+            if (found === 0) {
+                alert("No matching books found.");
+            }
+        }
+    </script>
+</body>
+</html>

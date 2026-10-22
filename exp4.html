@@ -1,0 +1,312 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Train Reservation System</title>
+
+    <style>
+        body {
+            font-family: Arial;
+            margin: 0;
+            background: #f2f5f9;
+        }
+
+        header {
+            background: #123456;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #245580;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 10px;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 85%;
+            margin: 20px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 6px 0;
+        }
+
+        button {
+            background: #123456;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .train {
+            background: #e1edf5;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 6px;
+        }
+
+        footer {
+            background: #123456;
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Indian Rail Reservation</h1>
+    <p>Search Trains and Reserve Tickets</p>
+</header>
+
+<nav>
+    <a href="#search">Search Trains</a>
+    <a href="#booking">Book Ticket</a>
+    <a href="#pnr">PNR Status</a>
+    <a href="#cancel">Cancel Ticket</a>
+    <a href="#admin">Admin</a>
+</nav>
+
+<div class="container">
+
+    <section class="box" id="search">
+        <h2>Search Trains</h2>
+
+        <label>From Station:</label><br>
+        <input type="text" id="from" required><br>
+
+        <label>To Station:</label><br>
+        <input type="text" id="to" required><br>
+
+        <label>Journey Date:</label><br>
+        <input type="date" id="journeyDate" required><br>
+
+        <button onclick="searchTrains()">Search Trains</button>
+
+        <p id="searchResult"></p>
+    </section>
+
+    <section class="box" id="trains">
+        <h2>Available Trains (Sample)</h2>
+
+        <div class="train">
+            <h3>Train 12601 - Chennai Express</h3>
+            <p>Route: Chennai to Mumbai</p>
+            <p>Class: Sleeper / AC</p>
+            <p>Available Seats: 40</p>
+            <p>Fare: Rs. 750</p>
+            <button onclick="selectTrain('12601 - Chennai Express', 750)">
+                Select Train
+            </button>
+        </div>
+
+        <div class="train">
+            <h3>Train 12760 - Hyderabad Express</h3>
+            <p>Route: Hyderabad to Bengaluru</p>
+            <p>Class: Sleeper / AC</p>
+            <p>Available Seats: 25</p>
+            <p>Fare: Rs. 600</p>
+            <button onclick="selectTrain('12760 - Hyderabad Express', 600)">
+                Select Train
+            </button>
+        </div>
+    </section>
+
+    <section class="box" id="booking">
+        <h2>Reserve Ticket</h2>
+
+        <form onsubmit="bookTicket(event)">
+            <label>Passenger Name:</label><br>
+            <input type="text" id="passenger" required><br>
+
+            <label>Train:</label><br>
+            <input type="text" id="trainName" readonly required><br>
+
+            <label>Class:</label><br>
+            <select id="classType" required>
+                <option value="">Select Class</option>
+                <option value="Sleeper">Sleeper</option>
+                <option value="3AC">3 AC</option>
+                <option value="2AC">2 AC</option>
+            </select><br>
+
+            <label>Number of Passengers:</label><br>
+            <input type="number" id="passengers"
+                   min="1" max="6" value="1" required><br>
+
+            <button type="submit">Confirm Reservation</button>
+        </form>
+
+        <p id="ticketResult"></p>
+    </section>
+
+    <section class="box" id="pnr">
+        <h2>Check PNR Status</h2>
+        <input type="text" id="pnrNumber" placeholder="Enter PNR Number">
+        <button onclick="checkPNR()">Check Status</button>
+        <p id="pnrResult"></p>
+    </section>
+
+    <section class="box" id="cancel">
+        <h2>Cancel Ticket</h2>
+        <input type="text" id="cancelPNR" placeholder="Enter PNR Number">
+        <button onclick="cancelTicket()">Cancel Ticket</button>
+        <p id="cancelResult"></p>
+    </section>
+
+    <section class="box" id="admin">
+        <h2>Admin Report</h2>
+        <p>Admin can manage train details, fares, seats and reservations.</p>
+        <button onclick="showReport()">Generate Report</button>
+        <p id="report"></p>
+    </section>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 Train Reservation System</p>
+</footer>
+
+<script>
+    var selectedTrain = "";
+    var ticketFare = 0;
+    var pnrCounter = 10001;
+    var tickets = [];
+
+    function searchTrains() {
+        var from = document.getElementById("from").value;
+        var to = document.getElementById("to").value;
+        var date = document.getElementById("journeyDate").value;
+
+        if (from == "" || to == "" || date == "") {
+            alert("Please enter all journey details.");
+            return;
+        }
+
+        document.getElementById("searchResult").innerHTML =
+            "Searching from " + from + " to " + to +
+            " on " + date +
+            ". View the sample trains below.";
+    }
+
+    function selectTrain(name, fare) {
+        selectedTrain = name;
+        ticketFare = fare;
+
+        document.getElementById("trainName").value = name;
+
+        alert("Train selected successfully.");
+        document.getElementById("booking").scrollIntoView();
+    }
+
+    function bookTicket(event) {
+        event.preventDefault();
+
+        var name = document.getElementById("passenger").value;
+        var train = document.getElementById("trainName").value;
+        var count = Number(document.getElementById("passengers").value);
+        var classType = document.getElementById("classType").value;
+
+        if (train == "" || ticketFare == 0) {
+            alert("Please select a train first.");
+            return;
+        }
+
+        var pnr = pnrCounter++;
+        var total = ticketFare * count;
+
+        var ticket = {
+            pnr: pnr,
+            name: name,
+            train: train,
+            count: count,
+            classType: classType,
+            total: total,
+            status: "Confirmed"
+        };
+
+        tickets.push(ticket);
+
+        document.getElementById("ticketResult").innerHTML =
+            "Ticket booked successfully!" +
+            "<br>Passenger: " + name +
+            "<br>Train: " + train +
+            "<br>Class: " + classType +
+            "<br>Passengers: " + count +
+            "<br>Total Fare: Rs. " + total +
+            "<br>PNR Number: " + pnr +
+            "<br>Status: Confirmed";
+
+        document.getElementById("passenger").value = "";
+    }
+
+    function checkPNR() {
+        var pnr = document.getElementById("pnrNumber").value;
+        var found = false;
+
+        for (var i = 0; i < tickets.length; i++) {
+            if (tickets[i].pnr == pnr) {
+                document.getElementById("pnrResult").innerHTML =
+                    "Passenger: " + tickets[i].name +
+                    "<br>Train: " + tickets[i].train +
+                    "<br>Status: " + tickets[i].status;
+                found = true;
+                break;
+            }
+        }
+
+        if (!found) {
+            document.getElementById("pnrResult").innerHTML =
+                "PNR not found. Book a sample ticket first.";
+        }
+    }
+
+    function cancelTicket() {
+        var pnr = document.getElementById("cancelPNR").value;
+
+        for (var i = 0; i < tickets.length; i++) {
+            if (tickets[i].pnr == pnr &&
+                tickets[i].status == "Confirmed") {
+
+                tickets[i].status = "Cancelled";
+
+                document.getElementById("cancelResult").innerHTML =
+                    "Ticket cancelled successfully." +
+                    "<br>PNR: " + pnr +
+                    "<br>Sample refund: Rs. " +
+                    Math.floor(tickets[i].total * 0.8);
+
+                return;
+            }
+        }
+
+        document.getElementById("cancelResult").innerHTML =
+            "Valid confirmed PNR not found.";
+    }
+
+    function showReport() {
+        document.getElementById("report").innerHTML =
+            "Total tickets booked in this session: " + tickets.length;
+    }
+</script>
+
+</body>
+</html>

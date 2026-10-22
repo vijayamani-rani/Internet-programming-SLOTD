@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hotel Room Booking</title>
+    <style>
+        body {
+            font-family: Arial;
+            background: #f2f2f2;
+            margin: 0;
+        }
+
+        header {
+            background: #17324d;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #285577;
+            padding: 12px;
+            text-align: center;
+        }
+
+        nav a {
+            color: white;
+            margin: 12px;
+            text-decoration: none;
+        }
+
+        .container {
+            width: 85%;
+            margin: 20px auto;
+        }
+
+        .box {
+            background: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+        }
+
+        input, select, button {
+            padding: 10px;
+            margin: 6px 0;
+        }
+
+        button {
+            background: #17324d;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .room {
+            display: inline-block;
+            background: #e1edf5;
+            padding: 15px;
+            margin: 8px;
+            width: 200px;
+        }
+
+        footer {
+            background: #17324d;
+            color: white;
+            text-align: center;
+            padding: 12px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>Welcome to BlueSky Hotel</h1>
+    <p>Comfortable Rooms at Affordable Prices</p>
+</header>
+
+<nav>
+    <a href="#home">Home</a>
+    <a href="#rooms">Rooms</a>
+    <a href="#booking">Book Room</a>
+    <a href="#contact">Contact</a>
+</nav>
+
+<div class="container">
+
+    <section class="box" id="home">
+        <h2>About Our Hotel</h2>
+        <p>Enjoy a comfortable stay with excellent service.</p>
+    </section>
+
+    <section class="box" id="rooms">
+        <h2>Our Room Types</h2>
+
+        <div class="room">
+            <h3>Single Room</h3>
+            <p>Price: Rs. 1500 per night</p>
+        </div>
+
+        <div class="room">
+            <h3>Double Room</h3>
+            <p>Price: Rs. 2500 per night</p>
+        </div>
+
+        <div class="room">
+            <h3>Deluxe Room</h3>
+            <p>Price: Rs. 3500 per night</p>
+        </div>
+
+        <div class="room">
+            <h3>Suite Room</h3>
+            <p>Price: Rs. 5000 per night</p>
+        </div>
+    </section>
+
+    <section class="box" id="booking">
+        <h2>Book a Room</h2>
+
+        <form onsubmit="bookRoom(event)">
+            <label>Name:</label><br>
+            <input type="text" id="name" required><br>
+
+            <label>Destination:</label><br>
+            <input type="text" id="destination" required><br>
+
+            <label>Check-in Date:</label><br>
+            <input type="date" id="checkin" required><br>
+
+            <label>Check-out Date:</label><br>
+            <input type="date" id="checkout" required><br>
+
+            <label>Number of Guests:</label><br>
+            <input type="number" id="guests" min="1" required><br>
+
+            <label>Room Type:</label><br>
+            <select id="room" required>
+                <option value="">Select Room</option>
+                <option>Single Room</option>
+                <option>Double Room</option>
+                <option>Deluxe Room</option>
+                <option>Suite Room</option>
+            </select><br>
+
+            <button type="submit">Book Now</button>
+        </form>
+
+        <p id="result"></p>
+    </section>
+
+    <section class="box" id="contact">
+        <h2>Contact Us</h2>
+        <p>Email: bluesky@example.com</p>
+        <p>Phone: 9876543210</p>
+        <p>Address: City Centre</p>
+    </section>
+
+</div>
+
+<footer>
+    <p>&copy; 2026 BlueSky Hotel</p>
+</footer>
+
+<script>
+    function bookRoom(event) {
+        event.preventDefault();
+
+        var name = document.getElementById("name").value;
+        var checkin = document.getElementById("checkin").value;
+        var checkout = document.getElementById("checkout").value;
+
+        if (checkout <= checkin) {
+            document.getElementById("result").innerHTML =
+                "Check-out date must be after check-in date.";
+            return;
+        }
+
+        document.getElementById("result").innerHTML =
+            "Thank you, " + name +
+            "! Your booking request has been received.";
+    }
+</script>
+
+</body>
+</html>
