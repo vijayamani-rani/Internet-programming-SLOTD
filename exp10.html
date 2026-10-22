@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StyleHub Fashion Store</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#fff8f4;color:#342d2b}
+header{background:#7b2945;color:white;text-align:center;padding:24px}
+nav{background:#4e1b2d;padding:13px;text-align:center}
+nav a{color:white;text-decoration:none;margin:10px;font-weight:bold}
+.container{max-width:1100px;margin:22px auto;padding:15px}
+section{background:white;padding:20px;margin-bottom:20px;border-radius:9px;box-shadow:0 2px 8px #eadde0}
+h2{color:#7b2945}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px}
+.product{border:1px solid #eadde0;border-radius:8px;padding:14px;background:#fffdfc}
+input,select,textarea,button{width:100%;padding:10px;margin:6px 0;border:1px solid #d8c8cd;border-radius:5px}
+button{background:#9b3658;color:white;border:0;cursor:pointer;font-weight:bold}
+button:hover{background:#4e1b2d}
+.price{font-weight:bold;color:#9b3658}
+table{width:100%;border-collapse:collapse;margin-top:10px}
+th,td{border:1px solid #eadde0;padding:9px;text-align:left}
+th{background:#7b2945;color:white}
+footer{text-align:center;background:#4e1b2d;color:white;padding:16px}
+.small{font-size:12px;color:#76666b}
+</style>
+</head>
+<body>
+<header><h1>StyleHub</h1><p>Find Your Style. Wear Your Confidence.</p></header>
+<nav><a href="#categories">Categories</a><a href="#products">Shop</a><a href="#wishlist">Wishlist</a><a href="#cart">Cart</a><a href="#orders">Orders</a><a href="#admin">Admin</a></nav>
+<div class="container">
+<section id="categories"><h2>Shop by Category</h2><div class="grid">
+<div class="product"><h3>Women</h3><p>Dresses, tops and ethnic wear</p></div><div class="product"><h3>Men</h3><p>Shirts, trousers and casual wear</p></div>
+<div class="product"><h3>Kids</h3><p>Comfortable everyday outfits</p></div><div class="product"><h3>Footwear & Accessories</h3><p>Shoes, bags and accessories</p></div>
+<div class="product"><h3>Formal Wear</h3><p>Office and special occasion outfits</p></div><div class="product"><h3>Seasonal Collection</h3><p>Fresh looks for the season</p></div>
+</div></section>
+<section><h2>Customer Login / Registration</h2><form id="loginForm">
+<input id="customerName" required placeholder="Full name"><input id="customerEmail" type="email" required placeholder="Email address"><button type="submit">Sign In / Register</button></form><p id="loginMessage" class="small"></p></section>
+<section id="products"><h2>Fashion Catalogue</h2><input id="search" placeholder="Search clothing, footwear or accessories..." oninput="displayProducts()">
+<select id="categoryFilter" onchange="displayProducts()"><option value="All">All Categories</option><option>Women</option><option>Men</option><option>Kids</option><option>Footwear & Accessories</option><option>Formal Wear</option><option>Seasonal Collection</option></select>
+<div id="productList" class="grid"></div></section>
+<section id="wishlist"><h2>My Wishlist</h2><div id="wishlistList"></div></section>
+<section id="cart"><h2>Shopping Cart</h2><div id="cartList"></div><p id="cartTotal"></p><button onclick="checkout()">Checkout</button><p id="checkoutMessage" class="small"></p></section>
+<section id="orders"><h2>Order Status and History</h2><input id="orderEmail" type="email" placeholder="Enter your registered email"><button onclick="showOrders()">View Order History</button><div id="orderList"></div></section>
+<section id="admin"><h2>Administrator Panel</h2><p class="small">Demo admin tools: add products, update prices/descriptions, remove products, and view checkout customers.</p>
+<form id="addProductForm"><input id="newName" required placeholder="Product name">
+<select id="newCategory"><option>Women</option><option>Men</option><option>Kids</option><option>Footwear & Accessories</option><option>Formal Wear</option><option>Seasonal Collection</option></select>
+<input id="newPrice" type="number" min="1" required placeholder="Price (₹)"><textarea id="newDescription" required placeholder="Product description"></textarea><button type="submit">Add Product</button></form>
+<div id="adminProducts"></div><h3>Customer Checkout Details</h3><button onclick="showCustomers()">View Customers</button><div id="customerList"></div></section>
+</div><footer>StyleHub | Online Fashion Store</footer>
+<script>
+let products=[
+{id:1,name:"Floral Summer Dress",category:"Women",price:1799,description:"Lightweight floral dress for casual outings.",sizes:"S, M, L, XL",stock:10},
+{id:2,name:"Classic Cotton Shirt",category:"Men",price:1299,description:"Everyday cotton shirt with a comfortable fit.",sizes:"S, M, L, XL",stock:12},
+{id:3,name:"Kids Printed T-Shirt",category:"Kids",price:499,description:"Soft printed T-shirt for everyday play.",sizes:"2-3Y, 4-5Y, 6-7Y",stock:15},
+{id:4,name:"Everyday Sneakers",category:"Footwear & Accessories",price:2199,description:"Versatile sneakers for daily wear.",sizes:"6, 7, 8, 9, 10",stock:7},
+{id:5,name:"Formal Blazer",category:"Formal Wear",price:3499,description:"Smart blazer suitable for office and events.",sizes:"S, M, L, XL",stock:5},
+{id:6,name:"Seasonal Hoodie",category:"Seasonal Collection",price:1599,description:"Warm casual hoodie for cooler weather.",sizes:"S, M, L, XL",stock:8}
+];
+let cart=[],wishlist=[],orders=[],customers=[],signedInCustomer=null;
+function money(n){return "₹"+Number(n).toLocaleString("en-IN")}
+function displayProducts(){
+ const q=document.getElementById("search").value.toLowerCase(),cat=document.getElementById("categoryFilter").value;
+ const list=products.filter(p=>(cat==="All"||p.category===cat)&&(p.name+" "+p.description+" "+p.category).toLowerCase().includes(q));
+ document.getElementById("productList").innerHTML=list.map(p=>`<div class="product"><h3>${p.name}</h3><p>${p.category}</p><p>${p.description}</p><p><b>Available sizes:</b> ${p.sizes||"Standard"}</p><p class="price">${money(p.price)}</p><p>Stock: ${p.stock}</p><button onclick="addToCart(${p.id})" ${p.stock===0?"disabled":""}>Add to Cart</button><button onclick="toggleWishlist(${p.id})">Add to Wishlist</button></div>`).join("")||"<p>No matching products found.</p>";
+ displayAdminProducts();displayWishlist();
+}
+document.getElementById("loginForm").addEventListener("submit",e=>{
+ e.preventDefault();signedInCustomer={name:document.getElementById("customerName").value.trim(),email:document.getElementById("customerEmail").value.trim().toLowerCase()};
+ if(!customers.some(c=>c.email===signedInCustomer.email))customers.push({...signedInCustomer});
+ document.getElementById("loginMessage").textContent="Signed in for this demo as "+signedInCustomer.name+".";
+ document.getElementById("orderEmail").value=signedInCustomer.email;
+});
+function addToCart(id){const p=products.find(p=>p.id===id),item=cart.find(i=>i.id===id);if(!p||p.stock<1)return alert("This item is unavailable.");if(item){if(item.qty>=p.stock)return alert("No more stock available.");item.qty++;}else cart.push({id,qty:1});displayCart();}
+function displayCart(){
+ const out=document.getElementById("cartList");if(!cart.length){out.innerHTML="<p>Your cart is empty.</p>";document.getElementById("cartTotal").textContent="";return;}
+ out.innerHTML=cart.map(i=>{const p=products.find(p=>p.id===i.id);return `<div class="product"><b>${p.name}</b> — ${money(p.price)} each<p>Size: ${i.size||"Not selected"}</p><label>Size</label><select onchange="updateSize(${i.id},this.value)"><option value="">Choose size</option>${(p.sizes||"Standard").split(", ").map(s=>`<option ${i.size===s?"selected":""}>${s}</option>`).join("")}</select><label>Quantity</label><input type="number" min="1" max="${p.stock}" value="${i.qty}" onchange="updateQty(${i.id},this.value)"><button onclick="removeFromCart(${i.id})">Remove</button></div>`}).join("");
+ document.getElementById("cartTotal").textContent="Total: "+money(cart.reduce((s,i)=>s+products.find(p=>p.id===i.id).price*i.qty,0));
+}
+function updateSize(id,size){const item=cart.find(i=>i.id===id);if(item){item.size=size;displayCart();}}
+function updateQty(id,value){const item=cart.find(i=>i.id===id),p=products.find(p=>p.id===id);if(!item)return;let qty=parseInt(value,10);if(!Number.isFinite(qty)||qty<1)qty=1;if(qty>p.stock){alert("Quantity adjusted to available stock.");qty=p.stock;}item.qty=qty;displayCart();}
+function removeFromCart(id){cart=cart.filter(i=>i.id!==id);displayCart();}
+function toggleWishlist(id){if(wishlist.includes(id))wishlist=wishlist.filter(x=>x!==id);else wishlist.push(id);displayWishlist();}
+function displayWishlist(){const out=document.getElementById("wishlistList");out.innerHTML=wishlist.length?wishlist.map(id=>{const p=products.find(p=>p.id===id);return p?`<div class="product"><b>${p.name}</b> — ${money(p.price)}<button onclick="addToCart(${id})">Add to Cart</button><button onclick="toggleWishlist(${id})">Remove from Wishlist</button></div>`:""}).join(""):"<p>Your wishlist is empty.</p>";}
+function checkout(){
+ if(!signedInCustomer)return alert("Please sign in or register before checkout.");if(!cart.length)return alert("Your cart is empty.");
+ if(cart.some(i=>!i.size))return alert("Please select a size for each item in your cart.");
+ for(const i of cart){const p=products.find(p=>p.id===i.id);if(!p||p.stock<i.qty)return alert("Stock changed. Please review your cart.");}
+ const total=cart.reduce((s,i)=>s+products.find(p=>p.id===i.id).price*i.qty,0);
+ const order={id:"SH"+Date.now(),name:signedInCustomer.name,email:signedInCustomer.email,items:cart.map(i=>{const p=products.find(p=>p.id===i.id);return {name:p.name,qty:i.qty,size:i.size,price:p.price};}),total,status:"Order Placed",date:new Date().toLocaleDateString()};
+ cart.forEach(i=>products.find(p=>p.id===i.id).stock-=i.qty);orders.push(order);cart=[];displayCart();displayProducts();
+ document.getElementById("checkoutMessage").textContent="Demo checkout successful. Order ID: "+order.id+". Payment is not processed.";
+}
+function showOrders(){const email=document.getElementById("orderEmail").value.trim().toLowerCase(),list=orders.filter(o=>o.email===email),out=document.getElementById("orderList");
+ out.innerHTML=list.length?list.map(o=>`<div class="product"><h3>${o.id}</h3><p>${o.date} | ${o.status}</p><p>${o.items.map(i=>i.name+" ("+i.size+") × "+i.qty).join(", ")}</p><p>Total: ${money(o.total)}</p></div>`).join(""):"<p>No orders found for this email.</p>";}
+document.getElementById("addProductForm").addEventListener("submit",e=>{e.preventDefault();products.push({id:Date.now(),name:document.getElementById("newName").value.trim(),category:document.getElementById("newCategory").value,price:Number(document.getElementById("newPrice").value),description:document.getElementById("newDescription").value.trim(),sizes:"S, M, L, XL",stock:10});e.target.reset();displayProducts();alert("Product added to this demo catalogue.");});
+function displayAdminProducts(){const out=document.getElementById("adminProducts");if(!out)return;out.innerHTML=products.map(p=>`<div class="product"><b>${p.name}</b> (${p.category})<p>Current price: ${money(p.price)}</p><input id="price-${p.id}" type="number" min="1" value="${p.price}" aria-label="New price"><textarea id="desc-${p.id}" aria-label="New description">${p.description}</textarea><button onclick="updateProduct(${p.id})">Update Price / Description</button><button onclick="deleteProduct(${p.id})">Remove Product</button></div>`).join("");}
+function updateProduct(id){const p=products.find(p=>p.id===id);if(!p)return;const price=Number(document.getElementById("price-"+id).value),desc=document.getElementById("desc-"+id).value.trim();if(price<=0||!desc)return alert("Enter a valid price and description.");p.price=price;p.description=desc;displayProducts();}
+function deleteProduct(id){products=products.filter(p=>p.id!==id);cart=cart.filter(i=>i.id!==id);wishlist=wishlist.filter(x=>x!==id);displayProducts();displayCart();}
+function showCustomers(){const out=document.getElementById("customerList");out.innerHTML=customers.length?`<table><tr><th>Name</th><th>Email</th><th>Orders</th></tr>`+customers.map(c=>`<tr><td>${c.name}</td><td>${c.email}</td><td>${orders.filter(o=>o.email===c.email).length}</td></tr>`).join("")+"</table>":"<p>No customer records yet.</p>";}
+displayProducts();displayCart();
+</script>
+</body>
+</html>
+
